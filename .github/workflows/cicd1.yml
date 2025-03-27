@@ -31,7 +31,7 @@ jobs:
   security-check:
 
     runs-on: ubuntu-latest
-
+    needs: compile
     steps:
     - uses: actions/checkout@v4
     - name: Trivy Installation
@@ -46,6 +46,7 @@ jobs:
 
     - name: Gitleaks install
       run: sudo apt install gitleaks -y
+      
 
     - name: Gitleak code scan
       run: gitleaks detect source . -r gitleaks-report.json -f json
