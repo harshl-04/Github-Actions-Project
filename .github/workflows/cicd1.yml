@@ -15,7 +15,7 @@ on:
 jobs:
   compile:
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
   
   security-check:
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: compile
     steps:
     - uses: actions/checkout@v4
@@ -47,7 +47,6 @@ jobs:
     - name: Gitleaks install
       run: sudo apt install gitleaks -y
       
-
     - name: Gitleak code scan
       run: gitleaks detect source . -r gitleaks-report.json -f json
       
