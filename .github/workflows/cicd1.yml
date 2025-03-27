@@ -13,7 +13,7 @@ on:
     branches: [ "main" ] 
     
 jobs:
-  build:
+  compile:
 
     runs-on: ubuntu-latest
 
@@ -25,3 +25,29 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - name: Maven compile
+      run: mvn compile 
+  
+  security-check:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Trivy Installation
+      run: |
+        sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+        echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+        sudo apt-get update -y
+        sudo apt-get install trivy -y
+    - name: Trivy Fs Scan
+      run: trivy fs --format table -o fsreport.html .
+
+    - name: Gitleaks install
+      run: sudo apt install gitleaks -y
+
+    - name: Gitleak code scan
+      run: gitleaks detect source . -r gitleaks-report.json -f json
+      
+
